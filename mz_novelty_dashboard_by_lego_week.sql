@@ -228,21 +228,21 @@ GROUP BY 1
          
          ----------- member ----------------
          CAST((sum(case when is_member_order IS TRUE AND sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when is_member_order IS TRUE AND sales_qty < 0 then abs(order_rrp_amt) else 0 end)) AS FLOAT)/(sum(case when sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when sales_qty < 0 then abs(order_rrp_amt) else 0 end))           AS member_sales_share,
-         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)  AS member_shopper,
+         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)  AS member_shopper,
           
           ----------- 首单 ------------
-          CAST((count(distinct case when cn_lcs_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
-          CAST((count(distinct case when cn_lcs_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
+          CAST((count(distinct case when cn_lcs_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
+          CAST((count(distinct case when cn_lcs_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
 
       
          ----------- existing 0-1
-          CAST((count(distinct case when cn_lcs_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
-          CAST((count(distinct case when cn_lcs_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)           AS existing_0_1_member_shopper_share,
+          CAST((count(distinct case when cn_lcs_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
+          CAST((count(distinct case when cn_lcs_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)           AS existing_0_1_member_shopper_share,
     
          ----------- existing repurchase
          
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
   
      FROM omni_trans_fact trans
 LEFT JOIN (SELECT * FROM purchase_order_rk WHERE source_channel = 'LCS') purchase_order_rk
@@ -277,22 +277,22 @@ SELECT trans.source_channel,
          
          ----------- member
          CAST((sum(case when is_member_order IS TRUE AND sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when is_member_order IS TRUE AND sales_qty < 0 then abs(order_rrp_amt) else 0 end)) AS FLOAT)/(sum(case when sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when sales_qty < 0 then abs(order_rrp_amt) else 0 end))           AS member_sales_share,
-         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)  AS member_shopper,
+         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)  AS member_shopper,
           
           
          ----------- 首单 ------------
-          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date <= tmall_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
-          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date <= tmall_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
+          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date <= tmall_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
+          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date <= tmall_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
 
       
          ----------- existing 0-1
-          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date > tmall_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
-          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date > tmall_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)           AS existing_0_1_member_shopper_share,
+          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date > tmall_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
+          CAST((count(distinct case when tmall_bind_date IS NOT NULL AND cn_tm_launch_date > tmall_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)           AS existing_0_1_member_shopper_share,
     
          ----------- existing repurchase
          
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
   
     FROM omni_trans_fact trans
 LEFT JOIN (SELECT * FROM purchase_order_rk WHERE source_channel = 'TMALL') purchase_order_rk
@@ -327,23 +327,23 @@ SELECT trans.source_channel,
          
          ----------- member
          CAST((sum(case when is_member_order IS TRUE AND sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when is_member_order IS TRUE AND sales_qty < 0 then abs(order_rrp_amt) else 0 end)) AS FLOAT)/(sum(case when sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when sales_qty < 0 then abs(order_rrp_amt) else 0 end))           AS member_sales_share,
-         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)  AS member_shopper,
+         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)  AS member_shopper,
           
           
                     
          ----------- 首单 ------------
-          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date <= douyin_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
-          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date <= douyin_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
+          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date <= douyin_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
+          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date <= douyin_bind_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
 
       
          ----------- existing 0-1
-          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date > douyin_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
-          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date > douyin_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)           AS existing_0_1_member_shopper_share,
+          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date > douyin_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
+          CAST((count(distinct case when douyin_bind_date IS NOT NULL AND cn_tm_launch_date > douyin_bind_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)           AS existing_0_1_member_shopper_share,
     
          ----------- existing repurchase
          
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
   
      FROM omni_trans_fact trans
 LEFT JOIN (SELECT * FROM purchase_order_rk WHERE source_channel = 'DOUYIN') purchase_order_rk
@@ -379,22 +379,22 @@ SELECT   'OMNI' AS source_channel,
          
          ----------- member
          CAST((sum(case when is_member_order IS TRUE AND sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when is_member_order IS TRUE AND sales_qty < 0 then abs(order_rrp_amt) else 0 end)) AS FLOAT)/(sum(case when sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when sales_qty < 0 then abs(order_rrp_amt) else 0 end))           AS member_sales_share,
-         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)  AS member_shopper,
+         NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)  AS member_shopper,
           
           
            ----------- 首单 ------------
-          CAST((count(distinct case when bu_cn_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
-          CAST((count(distinct case when bu_cn_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
+          CAST((count(distinct case when bu_cn_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                        AS pure_new_0_1_purchase_member_shopper,
+          CAST((count(distinct case when bu_cn_launch_date <= join_date AND purchase_order_rk.rk = 1 AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)/ NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)    AS pure_new_0_1_purchase_member_shopper_share,
 
       
          ----------- existing 0-1
-          CAST((count(distinct case when bu_cn_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
-          CAST((count(distinct case when bu_cn_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)           AS existing_0_1_member_shopper_share,
+          CAST((count(distinct case when bu_cn_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                AS existing_0_1_member_shopper,
+          CAST((count(distinct case when bu_cn_launch_date > join_date AND (purchase_order_rk.rk = 1) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)           AS existing_0_1_member_shopper_share,
     
          ----------- existing repurchase
          
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
-         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.member_detail_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT)                                                                                                                                                  AS lifetime_repurchase_member_shopper,
+         CAST((count(distinct case when (purchase_order_rk.rk >= 2) AND is_member_order IS TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)) AS FLOAT) / NULLIF((count(distinct case when is_member_order = TRUE AND if_eff_order_tag = true then trans.omni_channel_member_id else null end)),0)             AS lifetime_repurchase_member_shopper_share
   
   
      FROM omni_trans_fact trans
