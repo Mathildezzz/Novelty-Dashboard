@@ -12,19 +12,23 @@ SELECT date_id,
 
 
 product_cte AS (
+SELECT *,
+      CASE WHEN cn_lcs_launch_date <= cn_tm_launch_date AND cn_lcs_launch_date <= cn_dy_launch_date THEN cn_lcs_launch_date  -- 考虑early street in lcs
+           WHEN cn_tm_launch_date <= cn_lcs_launch_date AND cn_tm_launch_date <= cn_dy_launch_date THEN cn_tm_launch_date
+           WHEN cn_dy_launch_date <= cn_lcs_launch_date AND cn_dy_launch_date <= cn_tm_launch_date THEN cn_dy_launch_date
+      END AS bu_cn_launch_date
+FROM (
 SELECT lego_sku_id,
        lego_sku_name_cn,
-       
-        bu_cn_launch_date,
+        
         CASE WHEN cn_lcs_on_street_date IS NOT NULL AND cn_lcs_launch_date >= cn_lcs_on_street_date THEN cn_lcs_on_street_date 
              ELSE cn_lcs_launch_date 
-        END                   AS cn_lcs_launch_date,
+        END AS cn_lcs_launch_date,
         cn_tm_launch_date,
-          CASE WHEN licensed_douyin_brand_launch_date IS NOT NULL AND licensed_douyin_brand_launch_date <= licensed_douyin_family_launch_date THEN licensed_douyin_brand_launch_date
+         CASE WHEN licensed_douyin_brand_launch_date IS NOT NULL AND licensed_douyin_brand_launch_date <= licensed_douyin_family_launch_date THEN licensed_douyin_brand_launch_date
              WHEN licensed_douyin_family_launch_date IS NOT NULL AND licensed_douyin_brand_launch_date >= licensed_douyin_family_launch_date THEN licensed_douyin_family_launch_date
              ELSE COALESCE(licensed_douyin_brand_launch_date, licensed_douyin_family_launch_date)
         END  AS cn_dy_launch_date,  
-        
         cn_line,
         rsp,
         age_mark,
@@ -45,6 +49,7 @@ SELECT lego_sku_id,
          END                                        AS product_rrp_price_range             
       FROM edw.d_dl_product_info_latest
       WHERE TRIM(age_mark) ~ '^[0-9]+([ ]*[0-9]*/[0-9]+)?'   -- Filter out rows that don't start with a number or a fraction like '1 1/2'
+      )
 ),
 
 tmall_bind_date AS (
